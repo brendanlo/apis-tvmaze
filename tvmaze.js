@@ -13,6 +13,7 @@ const $searchForm = $("#searchForm");
  */
 
 async function getShowsByTerm(term) {
+  // TODO: move term into params as seperate argument
   const response = await axios.get(`https://api.tvmaze.com/search/shows?q=${term}`);
   let shows = [];
   for (let showData of response.data) {
@@ -41,7 +42,7 @@ function populateShows(shows) {
          <div class="media">
            <img 
               src="${show.image}" 
-              alt="Bletchly Circle San Francisco" 
+              alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
@@ -53,7 +54,7 @@ function populateShows(shows) {
          </div>  
        </div>
       `);
-
+    // TODO: change alt for img above ^
     $showsList.append($show);
   }
 }
