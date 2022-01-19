@@ -87,50 +87,40 @@ async function getEpisodesOfShow(id) {
   const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
   const episodes = response.data.map(function (episodeData) {
-    // NOTE return keyword and all data inside
-    let returnData = {};
-    returnData.id = episodeData.id;
-    returnData.name = episodeData.name;
-    returnData.season = episodeData.season;
-    returnData.number = episodeData.number;
-    return returnData;
+    return {
+      id: episodeData.id,
+      name: episodeData.name,
+      season: episodeData.season,
+      number: episodeData.number
+    };
   });
 
   return episodes;
 }
 
 
-/** Given a list of episode objects, add the Episode information in the dom under 
- * #episodesList
+/** Given a list of episode objects, empty the previous list, add the Episode 
+ * information in the dom under #episodesList, then show the Episode area
  */
 
-function populateEpisodes(episodes) {
-  // TODO put the empty and show in this function
+function displayEpisodes(episodes) {
+  $episodesList.empty();
   for (let episode of episodes) {
     const $episode = $(`<li> ${episode.name} (season ${episode.season}, 
       number ${episode.number}) </li>`);
     $episodesList.append($episode);
   }
-
-}
-
-/** clears the episodeList if it has been clicked before, and shows the 
- * episode list for the most recently clicked show at the bottom of the page
- */
-
-async function handleEpisodeClick(evt) {
-  // NOTE move into controller function?
-  $episodesList.empty();
-  const id = $(evt.target).parents(".Show").attr('data-show-id');
-  searchForEpisodeAndDisplay(id);
   $episodesArea.show();
 }
 
-$("#showsList").on("click", ".Show-getEpisodes", handleEpisodeClick);
+$("#showsList").on("click", ".Show-getEpisodes", async function (evt) {
+  const id = $(evt.target).parents(".Show").attr('data-show-id');
+  searchForEpisodeAndDisplay(id);
+});
 
 /** Given a show id, searches for episodes and displays them in episode list */
 
 async function searchForEpisodeAndDisplay(id) {
   const episodes = await getEpisodesOfShow(id);
-  populateEpisodes(episodes);
+  displayEpisodes(episodes);
 }
