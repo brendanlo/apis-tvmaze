@@ -87,6 +87,7 @@ async function getEpisodesOfShow(id) {
   const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
   const episodes = response.data.map(function (episodeData) {
+    // NOTE return keyword and all data inside
     let returnData = {};
     returnData.id = episodeData.id;
     returnData.name = episodeData.name;
@@ -99,11 +100,12 @@ async function getEpisodesOfShow(id) {
 }
 
 
-/** Given an episode object, add the Episode information in the dom under 
+/** Given a list of episode objects, add the Episode information in the dom under 
  * #episodesList
  */
 
 function populateEpisodes(episodes) {
+  // TODO put the empty and show in this function
   for (let episode of episodes) {
     const $episode = $(`<li> ${episode.name} (season ${episode.season}, 
       number ${episode.number}) </li>`);
@@ -117,6 +119,7 @@ function populateEpisodes(episodes) {
  */
 
 async function handleEpisodeClick(evt) {
+  // NOTE move into controller function?
   $episodesList.empty();
   const id = $(evt.target).parents(".Show").attr('data-show-id');
   searchForEpisodeAndDisplay(id);
