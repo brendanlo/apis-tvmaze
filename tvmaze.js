@@ -13,8 +13,9 @@ const $searchForm = $("#searchForm");
  */
 
 async function getShowsByTerm(term) {
-  // TODO: move term into params as seperate argument
-  const response = await axios.get(`https://api.tvmaze.com/search/shows?q=${term}`);
+  const showParams = { params: { q: term } }
+  const response = await axios.get(`https://api.tvmaze.com/search/shows`,
+    showParams);
   let shows = [];
   for (let showData of response.data) {
     console.log(showData);
@@ -42,19 +43,18 @@ function populateShows(shows) {
          <div class="media">
            <img 
               src="${show.image}" 
-              alt="Bletchly Circle San Francisco"
-              class="w-25 me-3">
-           <div class="media-body">
-             <h5 class="text-primary">${show.name}</h5>
-             <div><small>${show.summary}</small></div>
-             <button class="btn btn-outline-light btn-sm Show-getEpisodes">
-               Episodes
-             </button>
-           </div>
-         </div>  
-       </div>
+              alt="${show.name}"
+              class= "w-25 me-3" >
+      <div class="media-body">
+        <h5 class="text-primary">${show.name}</h5>
+        <div><small>${show.summary}</small></div>
+        <button class="btn btn-outline-light btn-sm Show-getEpisodes">
+          Episodes
+        </button>
+      </div>
+         </div >  
+       </div >
       `);
-    // TODO: change alt for img above ^
     $showsList.append($show);
   }
 }
@@ -82,8 +82,32 @@ $searchForm.on("submit", async function (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+  const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
 
-/** Write a clear docstring for this function... */
+  const episodes = [];
+  episodes = response.map(function (episodeData) {
+    let returnData = {};
+    returnData.id = episodeData.id;
+    returnData.name = episodeData.name;
+    returnData.season = episodeData.season;
+    returnData.number = episodeData.number;
+    return returnData;
+  });
 
-// function populateEpisodes(episodes) { }
+  return episodes;
+}
+
+
+/** Given an episode object, add the Episode information in the dom under 
+ * #episodesList
+ */
+
+function populateEpisodes(episodes) {
+  let $episodesList = $("#episodesList");
+
+  for (let episode of episodes) {
+    const $episode = $(`<li> ${episode.name} (season ${episode.season}, 
+      number ${episode.number}) </li>`);
+  }
+}
