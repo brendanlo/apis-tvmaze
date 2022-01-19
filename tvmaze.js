@@ -3,6 +3,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
+const $episodesList = $("#episodesList");
 
 
 /** Given a search term, search for tv shows that match that query.
@@ -103,8 +104,6 @@ async function getEpisodesOfShow(id) {
  */
 
 function populateEpisodes(episodes) {
-  let $episodesList = $("#episodesList");
-
   for (let episode of episodes) {
     const $episode = $(`<li> ${episode.name} (season ${episode.season}, 
       number ${episode.number}) </li>`);
@@ -113,14 +112,22 @@ function populateEpisodes(episodes) {
 
 }
 
+/** clears the episodeList if it has been clicked before, and shows the 
+ * episode list for the most recently clicked show at the bottom of the page
+ */
+
+async function handleEpisodeClick(evt) {
+  $episodesList.empty();
+  const id = $(evt.target).parents(".Show").attr('data-show-id');
+  searchForEpisodeAndDisplay(id);
+  $episodesArea.show();
+}
+
+$("#showsList").on("click", ".Show-getEpisodes", handleEpisodeClick);
+
 /** Given a show id, searches for episodes and displays them in episode list */
 
 async function searchForEpisodeAndDisplay(id) {
   const episodes = await getEpisodesOfShow(id);
   populateEpisodes(episodes);
 }
-
-$("#showsList").on("click", ".Show-getEpisodes", async function (evt) {
-  const id = evt.originalEvent.path[3].getAttribute("data-show-id");
-  searchForEpisodeAndDisplay(id);
-});
